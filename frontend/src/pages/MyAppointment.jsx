@@ -58,6 +58,25 @@ const MyAppointment = () => {
   }
 };
 
+const cancelAppointment = async (appointmentId) => {
+  try {
+
+    const { data } = await axios.post(backendUrl + '/api/user/cancel-appointment', { appointmentId },{headers: {token}})
+
+    if (data.success) {
+      toast.success(data.message);
+      getUserAppointments();
+    } else {
+      toast.error(data.message);
+    }
+
+  } catch (error) {
+    console.log(error);
+    toast.error(error.message);
+  }
+};
+
+
   const initPay = (order) => {
 
   const options = {
@@ -160,6 +179,7 @@ const MyAppointment = () => {
             <div className='flex flex-col gap-2 justify-end'>
               {!item.cancelled && item.payment && !item.isCompleted && <button className='sm:min-w-48 py-2 border rounded text-green-500 bg-indigo-50'>Payment Completed</button>}
               {!item.cancelled && !item.payment && !item.isCompleted && <button onClick={() =>appointmentRazorpay(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>}
+              {!item.cancelled && !item.payment && !item.isCompleted && <button onClick={() =>cancelAppointment(item._id)} className='text-sm text-red-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Cancel Appointment</button>}
               {!item.cancelled && item.payment && !item.isCompleted && item.refundStatus !== "processed" && (
                  <button onClick={() => cancelAndRefundAppointment(item._id)}
                    className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-red-600 hover:text-white transition-all duration-300'>
