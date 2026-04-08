@@ -47,6 +47,25 @@ const AdminContextProvider = (props) => {
         }
     }
 
+    const changeEmergencyAvailability = async (docId) => {
+  try {
+    const { data } = await axios.post(
+      backendUrl + "/api/admin/change-emergency-availability",
+      { docId },
+      { headers: { aToken } }
+    );
+
+    if (data.success) {
+      toast.success(data.message);
+      getAllDoctors();
+    } else {
+      toast.error(data.message);
+    }
+  } catch (error) {
+    toast.error(error.response?.data?.message || error.message);
+  }
+};
+
     const getAllAppointments = async () => {
 
         try {
@@ -104,7 +123,7 @@ const AdminContextProvider = (props) => {
     const value = {
         aToken, setAToken, backendUrl, doctors, getAllDoctors, changeAvailability,
         appointments, setAppointments, getAllAppointments, cancelAppointment, dashData,
-        getDashData
+        getDashData, changeEmergencyAvailability
     }
 
     return (

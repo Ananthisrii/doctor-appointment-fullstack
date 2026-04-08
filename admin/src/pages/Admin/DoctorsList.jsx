@@ -3,7 +3,7 @@ import { AdminContext } from '../../context/AdminContext'
 
 const DoctorsList = () => {
 
-   const { doctors, aToken, getAllDoctors, changeAvailability } = useContext(AdminContext)
+   const { doctors, aToken, getAllDoctors, changeAvailability, changeEmergencyAvailability } = useContext(AdminContext)
 
    useEffect(()=>{
      if (aToken) {
@@ -22,9 +22,14 @@ const DoctorsList = () => {
               <div className='p-4 '>
                 <p className='text-neutral-800 text-lg font-medium'>{item.name}</p>
                 <p className='text-zinc-600 text-sm'>{item.speciality}</p>
-                <div className='mt-2 flex items-center gap-1 teaxt-sm'>
+                <div className='mt-2 flex items-center gap-1 text-sm'>
                   <input onChange={()=> changeAvailability(item._id)} type='checkbox' checked={item.available}/>
                   <p>Available</p>
+                </div>
+                <div className='mt-2 flex items-center gap-1 text-sm'>
+                 <input onChange={() => changeEmergencyAvailability(item._id)} type='checkbox' checked={item.emergencyAvailability}
+                  disabled={!item.available} />
+                   <p className={item.emergencyAvailability ? "text-red-500" : "text-gray-400"}>Emergency</p>
                 </div>
               </div>
             </div>

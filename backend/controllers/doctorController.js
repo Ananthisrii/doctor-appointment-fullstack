@@ -5,19 +5,56 @@ import appointmentModel from "../models/appointmentModel.js"
 import mongoose from "mongoose"
 
 const changeAvailability = async (req, res) => {
-    try {
-        
-        const {docId} = req.body
+  try {
+    const { docId } = req.body;
 
-        const docData = await doctorModel.findById(docId)
-        await doctorModel.findByIdAndUpdate(docId,{available: !docData.available })
-        res.json({success: true,message: "Availability changed"})
+    const doctor = await doctorModel.findById(docId);
 
-    } catch (error) {
-        console.log(error)
-        res.json({success: false,message: error.message})
+    // 🔁 Toggle availability
+    doctor.available = !doctor.available;
+
+    // 🚨 If doctor is unavailable → disable emergency
+    if (!doctor.available) {
+      doctor.emergencyAvailability = false;
     }
-}
+
+    await doctor.save();
+
+    res.json({
+      success: true,
+      message: "Availability changed",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const changeEmergencyAvailability = async (req, res) => {
+  try {
+    const { docId } = req.body;
+
+    const doctor = await doctorModel.findById(docId);
+
+    doctor.emergencyAvailability = !doctor.emergencyAvailability;
+    await doctor.save();
+
+    res.json({
+      success: true,
+      message: "Emergency availability updated",
+      emergencyAvailability: doctor.emergencyAvailability,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 const doctorList = async (req, res) => {
     try {
@@ -197,5 +234,5 @@ export {changeAvailability, doctorList,
      appointmentsDoctor, 
      appointmentComplete, 
      appointmentCancel, doctorDashboard,
-    doctorProfile, updateDoctorProfile
+    doctorProfile, updateDoctorProfile,changeEmergencyAvailability
 }
